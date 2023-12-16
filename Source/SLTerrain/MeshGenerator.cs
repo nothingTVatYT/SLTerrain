@@ -1,5 +1,4 @@
 using System;
-using FlaxEditor.Content;
 using FlaxEngine;
 
 namespace SLTerrain;
@@ -69,7 +68,6 @@ public class MeshGenerator : Script
     private void SaveHeightMap(string name)
     {
         var heightmap = Content.CreateVirtualAsset<Texture>();
-        var desc = GPUTextureDescription.New2D(MapSize, MapSize, PixelFormat.R32_Float, GPUTextureFlags.ShaderResource);
         var mips = new TextureBase.InitData.MipData();
         var size = MapSize * MapSize * PixelFormatExtensions.SizeInBytes(PixelFormat.R32_Float);
         mips.RowPitch = size / MapSize;
