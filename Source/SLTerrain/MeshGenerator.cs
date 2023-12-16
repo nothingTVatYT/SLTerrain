@@ -40,7 +40,7 @@ public class MeshGenerator : Script
 
     public void Erode()
     {
-        _map = Actor.FindScript<HeightMapGenerator>().Generate(MapSize);
+        _map = Actor.FindScript<HeightMapGenerator>().Generate(MapSize, HeightMapGenerator.GenerationMode.PurePerlin);
         SaveHeightMap("HeightMapRaw");
         _erosion = Actor.FindScript<Erosion>();
         _erosion.Erode(_map, MapSize, NumErosionIterations, true);
@@ -68,7 +68,7 @@ public class MeshGenerator : Script
 
     private void SaveHeightMap(string name)
     {
-        var heightmap = Content.CreateVirtualAsset<Texture>(); //new GPUTexture();
+        var heightmap = Content.CreateVirtualAsset<Texture>();
         var desc = GPUTextureDescription.New2D(MapSize, MapSize, PixelFormat.R32_Float, GPUTextureFlags.ShaderResource);
         var mips = new TextureBase.InitData.MipData();
         var size = MapSize * MapSize * PixelFormatExtensions.SizeInBytes(PixelFormat.R32_Float);

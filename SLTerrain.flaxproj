@@ -1,10 +1,10 @@
 ﻿{
-	"Name": "YAPC",
+	"Name": "SLTerrain",
 	"Version": "1.0.0",
 	"Company": "",
 	"Copyright": "",
-	"GameTarget": "YAPCTarget",
-	"EditorTarget": "YAPCEditorTarget",
+	"GameTarget": "SLTerrainTarget",
+	"EditorTarget": "SLTerrainEditorTarget",
 	"References": [
 		{
 			"Name": "$(EnginePath)/Flax.flaxproj"
