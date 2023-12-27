@@ -9,6 +9,7 @@ public class HeightMapGenerator : Script
     public enum GenerationMode
     {
         SL,
+        SimplexNoise,
         PurePerlin
     };
     public int Seed;
@@ -18,6 +19,8 @@ public class HeightMapGenerator : Script
     public float Persistence = .5f;
     public float Lacunarity = 2;
     public float InitialScale = 2;
+    public float PerlinScale = 10f;
+    private readonly Perlin _perlin = new();
 
     public float[] Generate(int mapSize, GenerationMode mode = GenerationMode.SL)
     {
@@ -26,13 +29,26 @@ public class HeightMapGenerator : Script
         var maxValue = float.MinValue;
         switch (mode)
         {
-            case GenerationMode.PurePerlin:
+            case GenerationMode.SimplexNoise:
                 var tiling = new Float2(0.5f, 0.5f); 
                 for (var y = 0; y < mapSize; y++)
                 {
                     for (var x = 0; x < mapSize; x++)
                     {
                         var noiseVal = Noise.SimplexNoise(new Float2(x, y));
+                        map[y * mapSize + x] = noiseVal;
+                        minValue = Mathf.Min(noiseVal, minValue);
+                        maxValue = Mathf.Max(noiseVal, maxValue);
+                    }
+                }
+
+                break;
+            case GenerationMode.PurePerlin:
+                for (var y = 0; y < mapSize; y++)
+                {
+                    for (var x = 0; x < mapSize; x++)
+                    {
+                        var noiseVal = _perlin.NValue(PerlinScale * x/mapSize, PerlinScale * y/mapSize);
                         map[y * mapSize + x] = noiseVal;
                         minValue = Mathf.Min(noiseVal, minValue);
                         maxValue = Mathf.Max(noiseVal, maxValue);

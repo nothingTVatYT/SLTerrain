@@ -8,6 +8,7 @@ public class MeshGenerator : Script
     [Header("Mesh Settings")] [Range(2, 511)]
     public int MapSize = 511;
 
+    public HeightMapGenerator.GenerationMode Mode = HeightMapGenerator.GenerationMode.SL;
     public float Scale = 20;
     public float ElevationScale = 10;
     public Material TerrainMaterial;
@@ -39,11 +40,11 @@ public class MeshGenerator : Script
 
     public void Erode()
     {
-        _map = Actor.FindScript<HeightMapGenerator>().Generate(MapSize, HeightMapGenerator.GenerationMode.PurePerlin);
+        _map = Actor.FindScript<HeightMapGenerator>().Generate(MapSize, Mode);
         SaveHeightMap("HeightMapRaw");
         _erosion = Actor.FindScript<Erosion>();
         _erosion.Erode(_map, MapSize, NumErosionIterations, true);
-        //GenerateMesh();
+        GenerateMesh();
         SaveHeightMap("HeightMapEroded");
     }
 
@@ -93,15 +94,19 @@ public class MeshGenerator : Script
     {
         var min = float.MaxValue;
         var max = float.MinValue;
-        
+        var invalidPixels = 0;
+
         for (var i = 0; i < MapSize * MapSize; i++)
         {
             if (_map[i] < 0 || float.IsNaN(_map[i]) || float.IsInfinity(_map[i]))
+            {
                 _map[i] = 0;
+                invalidPixels++;
+            }
             min = Mathf.Min(min, _map[i]);
             max = Mathf.Max(max, _map[i]);
         }
-        Debug.Log($"_map values are in the range {min} to {max}");
+        Debug.Log($"_map values are in the range {min} to {max} (found {invalidPixels} invalid pixels)");
     }
 
     void GenerateMesh()
